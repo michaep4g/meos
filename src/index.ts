@@ -2,7 +2,9 @@ import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import uploadRoutes from './routes/upload.routes';
+import { USE_MOCK_SERVICES } from './config/service-config';
 
 // Load environment variables
 dotenv.config();
@@ -17,6 +19,20 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, '../public')));
+
+// If using mock services, serve the mock storage directory
+if (USE_MOCK_SERVICES) {
+  const mockStoragePath = path.join(__dirname, '../mock-storage');
+  
+  // Create the directory if it doesn't exist
+  if (!fs.existsSync(mockStoragePath)) {
+    fs.mkdirSync(mockStoragePath, { recursive: true });
+  }
+  
+  // Serve the mock storage directory
+  app.use('/mock-storage', express.static(mockStoragePath));
+  console.log(`[Server] Serving mock storage from ${mockStoragePath}`);
+}
 
 // Routes
 app.use('/api/upload', uploadRoutes);

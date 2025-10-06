@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { upload } from '../middleware/upload.middleware';
-import { s3Service, S3Object } from '../services/s3.service';
+import { s3Service } from '../config/service-config';
+import { S3Object } from '../services/s3.service';
 
 const router = Router();
 
